@@ -58,19 +58,21 @@ openai.organization = "org-ml3jQpNQbsZ9wAD3ZEeDhGX6"
 openai.api_key = "openai_key"
 
 @bot.tree.command()
-async def chat(interaction: discord.Interaction, args: str):
-    await interaction.response.send_message("Wait a bit as I request the response from ChatGPT! (10 seconds)", ephemeral=True)
+async def chat(interaction: discord.Interaction, question: str):
     try:
+        await interaction.response.send_message("Wait a bit as I request the response from ChatGPT! After that it will be 10 seconds before you can make another request in order to avoid my API key blowing up. If you'd like to use your own api key, use the code over at https://github.com/DuhonDoesCode/ChatGPT-Discord-Bot ", ephemeral=True)
         completion = openai.Completion.create(
             engine="text-davinci-002",
-            prompt=args,
+            prompt=question,
             max_tokens=1024,
             temperature=0.5,
         )
         time.sleep(10)
         await interaction.followup.send(completion.choices[0].text)
+        time.sleep(9)
     except:
-        await interaction.followup.send("My OpenAI API key might be overloaded, try again later?")
+        await interaction.followup.send("My API key is overloaded (probably), try again later!")
+        
     
 
 bot.run('bot_key')
